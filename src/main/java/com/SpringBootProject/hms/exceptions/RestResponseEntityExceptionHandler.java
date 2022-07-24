@@ -1,6 +1,5 @@
 package com.SpringBootProject.hms.exceptions;
 
-import com.SpringBootProject.hms.entity.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

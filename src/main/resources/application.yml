@@ -1,0 +1,81 @@
+server:
+  port: 8989
+  error:
+    include-message: always
+    include-binding-errors: always
+
+jwt:
+  secret: jaxbasmxmansxbxjkasjkc
+aes:
+  encryption:
+    key: 1234567890123456
+
+
+spring:
+  profiles:
+    active: dev
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/hms
+    username: root
+    password: root@fonepay
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    generate-ddl: true
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+welcome:
+  message: Welcome Dev Team! Happy Coding!!!!!!!!!!!!!!!!!
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: qa
+  datasource:
+    url: jdbc:mysql://localhost:3306/hms-QA
+    username: root
+    password: root@fonepay
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+welcome:
+  message: Welcome QA team
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://localhost:3306/hms-prod
+    username: root
+    password: root@fonepay
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+welcome:
+  message: app deployed---------WELCOME USER---------------

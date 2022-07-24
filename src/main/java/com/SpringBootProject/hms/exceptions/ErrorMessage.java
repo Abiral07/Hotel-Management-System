@@ -1,4 +1,4 @@
-package com.SpringBootProject.hms.entity;
+package com.SpringBootProject.hms.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
