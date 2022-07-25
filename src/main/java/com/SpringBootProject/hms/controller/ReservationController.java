@@ -9,15 +9,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import javax.validation.*;
 import java.util.List;
+import java.util.Set;
+
 @RestController
 public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
     @PostMapping(PathConstant.ADD_RESERVATION)
-    public ResponseEntity<ReservationResponse> addReservation(@Valid @RequestBody ReservationRequest reservationDto, @RequestHeader("Authorization") String bearerToken) throws CustomException {
+    public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationRequest reservationDto, @RequestHeader("Authorization") String bearerToken) throws CustomException {
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<ReservationRequest>> violations = validator.validate(reservationDto);
+            for (ConstraintViolation<ReservationRequest> violation : violations) {
+                throw new CustomException(violation.getMessage());
+            }
+        }
+
         return ResponseEntity.ok(reservationService.addReservation(reservationDto, bearerToken.substring(7)));
     }
     @PostMapping(PathConstant.UPDATE_RESERVATION)
