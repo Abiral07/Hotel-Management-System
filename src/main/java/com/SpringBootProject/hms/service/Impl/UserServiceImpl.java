@@ -11,6 +11,8 @@ import com.SpringBootProject.hms.exceptions.CustomException;
 import com.SpringBootProject.hms.repo.RoleRepo;
 import com.SpringBootProject.hms.repo.UserRepo;
 import com.SpringBootProject.hms.service.UserService;
+import com.SpringBootProject.hms.utils.AesEncryption;
+import com.SpringBootProject.hms.utils.RSA;
 import com.SpringBootProject.hms.utils.jwt.JwtTokenUtil;
 import com.SpringBootProject.hms.utils.jwt.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import com.SpringBootProject.hms.utils.AesEncryption;
-import com.SpringBootProject.hms.utils.RSA;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -74,12 +74,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginResponseJWT userLogin(HttpServletRequest request, LoginDto loginDto) throws Exception {
         authenticate(loginDto.getUserName(), loginDto.getPassword());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
+        String jwtToken = jwtTokenUtil.generateToken(userDetails);
 //        ----------------SESSION------------------------------------
         sessionObj = request.getSession();      //returns old session if it exists else returns null
         if (sessionObj == null)
             sessionObj = request.getSession(true);      //creating new session if session doesn't exist
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(loginDto.getUserName());
-        String jwtToken = jwtTokenUtil.generateToken(userDetails);
         sessionObj.setAttribute("token", jwtToken);
         sessionObj.setAttribute("userName", userDetails.getUsername());
         sessionObj.setAttribute("Roles", userDetails.getAuthorities());
