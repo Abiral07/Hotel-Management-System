@@ -3,6 +3,7 @@ package com.SpringBootProject.hms.service.Impl;
 import com.SpringBootProject.hms.entity.Role;
 import com.SpringBootProject.hms.entity.Users;
 import com.SpringBootProject.hms.exceptions.CustomException;
+import com.SpringBootProject.hms.exceptions.ResourceNotFoundException;
 import com.SpringBootProject.hms.repo.RoleRepo;
 import com.SpringBootProject.hms.repo.UserRepo;
 import com.SpringBootProject.hms.service.RoleService;
@@ -47,7 +48,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Set<String> addRoleToUSer(Long id, Set<String> roles) {
-        Users user = userRepository.findById(id).get();
+        Users user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id));
         roles.forEach(role->{
             role = role.toUpperCase();
             Role roleFromDb = roleRepository.findByRoleName(role);

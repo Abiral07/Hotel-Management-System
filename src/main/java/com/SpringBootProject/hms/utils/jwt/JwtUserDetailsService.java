@@ -20,6 +20,6 @@ public class JwtUserDetailsService implements UserDetailsService {
         if(user != null)
             return user;
         else
-            throw new UsernameNotFoundException("User not Found");
+            throw new UsernameNotFoundException("UserName " + username + " not Found");
     }
 }

@@ -2,6 +2,7 @@ package com.SpringBootProject.hms.service.Impl;
 
 import com.SpringBootProject.hms.entity.Room;
 import com.SpringBootProject.hms.entity.RoomType;
+import com.SpringBootProject.hms.exceptions.ResourceNotFoundException;
 import com.SpringBootProject.hms.repo.RoomRepo;
 import com.SpringBootProject.hms.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room updateRoom(Long id, Room room) {
-        Room updateRoom = roomRepo.findById(id).get();
+        Room updateRoom = roomRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Room", "Id", id));
 
         if (Objects.nonNull(room.getType()) && !"".equalsIgnoreCase(room.getType().toString())) {
             try {

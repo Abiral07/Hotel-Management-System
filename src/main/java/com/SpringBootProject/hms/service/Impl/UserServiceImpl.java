@@ -8,6 +8,7 @@ import com.SpringBootProject.hms.dtoToEntity.UserConverter;
 import com.SpringBootProject.hms.entity.Role;
 import com.SpringBootProject.hms.entity.Users;
 import com.SpringBootProject.hms.exceptions.CustomException;
+import com.SpringBootProject.hms.exceptions.ResourceNotFoundException;
 import com.SpringBootProject.hms.repo.RoleRepo;
 import com.SpringBootProject.hms.repo.UserRepo;
 import com.SpringBootProject.hms.service.UserService;
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public UserResponseDto getUserById(Long id) {
-        return userConverter.entityToDto(userRepo.findById(id).get());
+        return userConverter.entityToDto(userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id)));
     }
 
     @Override
@@ -108,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto updateUser(Long id, UserRequestDto user) throws CustomException{
-        Users newUser = userRepo.findById(id).get();
+        Users newUser = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id));
 
         if (Objects.nonNull(user.getUserName()) && !"".equalsIgnoreCase(user.getUserName())) {
             if (Objects.nonNull(userRepo.findByUserName(user.getUserName()))) {

@@ -6,6 +6,7 @@ import com.SpringBootProject.hms.dtoToEntity.ReservationEntityToResponse;
 import com.SpringBootProject.hms.entity.Reservation;
 import com.SpringBootProject.hms.entity.Room;
 import com.SpringBootProject.hms.exceptions.CustomException;
+import com.SpringBootProject.hms.exceptions.ResourceNotFoundException;
 import com.SpringBootProject.hms.repo.ReservationRepo;
 import com.SpringBootProject.hms.repo.RoomRepo;
 import com.SpringBootProject.hms.repo.UserRepo;
@@ -114,7 +115,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationResponse getReservationById(Long id) {
-        return reservationConvertor.entityToResponse(reservationRepo.findById(id).get());
+        return reservationConvertor.entityToResponse(reservationRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reservation", "Id", id)));
     }
 
     @Override
