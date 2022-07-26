@@ -4,6 +4,7 @@ import com.SpringBootProject.hms.constants.PathConstant;
 import com.SpringBootProject.hms.entity.Room;
 import com.SpringBootProject.hms.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class RoomController {
 
     @PostMapping(PathConstant.ADD_ROOM)
     public ResponseEntity<Room> addRoom(@RequestBody Room room){
-        return ResponseEntity.ok((roomService.addRoom(room)));
+        return new ResponseEntity<>((roomService.addRoom(room)), HttpStatus.CREATED);
     }
 
     @GetMapping(PathConstant.GET_ALL_ROOM)
@@ -31,7 +32,7 @@ public class RoomController {
 
     @PostMapping(PathConstant.UPDATE_ROOM)
     private ResponseEntity<Room> updateRoom(@PathVariable("id")Long id, @RequestBody Room room){
-        return ResponseEntity.ok(roomService.updateRoom(id,room));
+        return new ResponseEntity<>(roomService.updateRoom(id, room), HttpStatus.CREATED);
     }
 
     @GetMapping(PathConstant.GET_ROOM_BY_TYPE)

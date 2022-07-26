@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class UserRequestDto {
-    @NotEmpty
+    @NotEmpty(message = "UseName cannot be empty")
     private String userName;
     @NotEmpty(message = "Password cannot be empty")
     @Size(min = 8,message = "password must be 8 character long")

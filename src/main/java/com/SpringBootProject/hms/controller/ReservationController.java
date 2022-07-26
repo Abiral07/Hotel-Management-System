@@ -6,6 +6,7 @@ import com.SpringBootProject.hms.dto.responseDto.ReservationResponse;
 import com.SpringBootProject.hms.exceptions.CustomException;
 import com.SpringBootProject.hms.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +29,12 @@ public class ReservationController {
             }
         }
 
-        return ResponseEntity.ok(reservationService.addReservation(reservationDto, bearerToken.substring(7)));
+        return new ResponseEntity<>(reservationService.addReservation(reservationDto, bearerToken.substring(7)),
+                HttpStatus.CREATED);
     }
     @PostMapping(PathConstant.UPDATE_RESERVATION)
     public ResponseEntity<ReservationResponse> updateReservation(@PathVariable("id")Long id,@Valid @RequestBody ReservationRequest reservation) throws CustomException {
-        return ResponseEntity.ok(reservationService.updateReservation(id,reservation));
+        return new ResponseEntity<>(reservationService.updateReservation(id, reservation), HttpStatus.CREATED);
     }
 
     @GetMapping(PathConstant.GET_ALL_RESERVATION)

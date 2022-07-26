@@ -10,6 +10,7 @@ import com.SpringBootProject.hms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.BadPaddingException;
@@ -29,8 +30,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(PathConstant.REGISTRATION)
-    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto customers) throws CustomException {
-        return new ResponseEntity<>(userService.registerUser(customers), HttpStatus.ACCEPTED);
+    public ResponseEntity<UserResponseDto> registerUser(@Validated @RequestBody UserRequestDto customers) throws CustomException {
+        return new ResponseEntity<>(userService.registerUser(customers), HttpStatus.CREATED);
     }
 
     @PostMapping(PathConstant.LOGIN)

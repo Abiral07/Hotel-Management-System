@@ -5,6 +5,7 @@ import com.SpringBootProject.hms.entity.Role;
 import com.SpringBootProject.hms.exceptions.CustomException;
 import com.SpringBootProject.hms.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +29,11 @@ public class RoleController {
 
     @PostMapping(PathConstant.ADD_ROLE)
     public ResponseEntity<Role> addNewRole(@Valid @RequestBody Role role) throws CustomException {
-        return ResponseEntity.ok(roleService.addNewRole(role));
+        return new ResponseEntity<>(roleService.addNewRole(role), HttpStatus.CREATED);
     }
     @PostMapping(PathConstant.UPDATE_ROLE)
     public ResponseEntity<Role> updateRole(@PathVariable("id") Long id, @RequestBody Role role) throws CustomException {
-        return ResponseEntity.ok(roleService.updateRole(id,role));
+        return new ResponseEntity<>(roleService.updateRole(id, role), HttpStatus.CREATED);
     }
     @PostMapping(PathConstant.ADD_ROLE_TO_USER)
     public ResponseEntity<Set<String>> addRoleToUser(@PathVariable("id")Long id, @RequestBody Set<String> roles){

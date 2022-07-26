@@ -1,9 +1,7 @@
 package com.SpringBootProject.hms.dtoToEntity;
 
 import com.SpringBootProject.hms.dto.responseDto.ReservationResponse;
-import com.SpringBootProject.hms.dto.responseDto.UserResponseDto;
 import com.SpringBootProject.hms.entity.Reservation;
-import com.SpringBootProject.hms.entity.Users;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
