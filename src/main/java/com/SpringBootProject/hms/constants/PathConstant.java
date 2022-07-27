@@ -28,4 +28,5 @@ public class PathConstant {
     public static final String ADD_ROLE = "/addRole";
     public static final String UPDATE_ROLE = "/updateRole/{id}";
     public static final String ADD_ROLE_TO_USER = "/addRoleToUser/{id}";
+    public static final String REFRESH_TOKEN = "/refreshToken";
 }

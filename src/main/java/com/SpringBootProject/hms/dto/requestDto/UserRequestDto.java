@@ -36,8 +36,5 @@ public class UserRequestDto {
     @DateTimeFormat
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     private LocalDate dob;
-    @Min(value = 18, message = "Age should be greater than 18")
-    @Max(value = 150, message = "Age cannot be more than 150")
-    private Integer age;
     private Address address;
 }

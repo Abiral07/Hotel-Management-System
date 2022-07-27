@@ -24,10 +24,12 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+
 @RestController
 public class UserController {
     @Autowired
     private UserService userService;
+
 
     @PostMapping(PathConstant.REGISTRATION)
     public ResponseEntity<UserResponseDto> registerUser(@Validated @RequestBody UserRequestDto customers) throws CustomException {
@@ -50,12 +52,18 @@ public class UserController {
     }
 
     @GetMapping(PathConstant.GET_USER_BY_NAME)
-    public ResponseEntity<List<UserResponseDto>> getAllUsers(@PathVariable("name")String name){
-        return new ResponseEntity<>(userService.getUserByName(name),HttpStatus.ACCEPTED);
+    public ResponseEntity<List<UserResponseDto>> getAllUsers(@PathVariable("name") String name) {
+        return new ResponseEntity<>(userService.getUserByName(name), HttpStatus.ACCEPTED);
     }
 
     @PostMapping(PathConstant.UPDATE_USER)
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id")Long id,@Valid @RequestBody UserRequestDto customers) throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, CustomException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeySpecException, InvalidKeyException {
-        return ResponseEntity.ok(userService.updateUser(id,customers));
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserRequestDto customers) throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, CustomException, NoSuchAlgorithmException, BadPaddingException, IOException, InvalidKeySpecException, InvalidKeyException {
+        return ResponseEntity.ok(userService.updateUser(id, customers));
     }
+
+    @GetMapping(PathConstant.REFRESH_TOKEN)
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) throws Exception {
+        return ResponseEntity.ok(new LoginResponseJWT(userService.refreshToken(request)));
+    }
+
 }

@@ -6,6 +6,8 @@ server:
 
 jwt:
   secret: jaxbasmxmansxbxjkasjkc
+  expirationDateInSec: 60
+  refreshExpirationDateInMs: 9000000
 aes:
   encryption:
     key: 1234567890123456

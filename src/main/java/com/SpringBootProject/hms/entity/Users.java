@@ -12,6 +12,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
@@ -45,6 +47,8 @@ public class Users implements UserDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
     private LocalDate dob;
     @Column(name = "age")
+    @Min(value = 18, message = "Age should be greater than 18")
+    @Max(value = 150, message = "Age cannot be more than 150")
     private Integer age;
     @Column(name = "isactive")
     private Boolean isActive;

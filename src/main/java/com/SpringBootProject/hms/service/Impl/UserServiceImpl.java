@@ -16,6 +16,7 @@ import com.SpringBootProject.hms.utils.AesEncryption;
 import com.SpringBootProject.hms.utils.RSA;
 import com.SpringBootProject.hms.utils.jwt.JwtTokenUtil;
 import com.SpringBootProject.hms.utils.jwt.JwtUserDetailsService;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,10 +29,9 @@ import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         users.setPassword(passwordEncoder.encode(users.getPassword()));
         users.setEmail(aesEncryption.encrypt("AES/CBC/PKCS5Padding",users.getEmail())); //TODO: throw custom exception for dublicate email and mobile
         users.setMobile(rsa.rsaEncrypt(users.getMobile()));
+        users.setAge(Period.between(userDto.getDob(), LocalDate.now()).getYears());
         return userConverter.entityToDto(userRepo.save(users));
     }
 
@@ -88,6 +89,15 @@ public class UserServiceImpl implements UserService {
         return new LoginResponseJWT(jwtToken);
     }
 
+    @Override
+    public String refreshToken(HttpServletRequest request) {
+        // From the HttpRequest get the claims
+        DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) request.getAttribute("claims");
+
+        Map<String, Object> expectedMap = new HashMap<>(claims);
+        return jwtTokenUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());
+    }
+
     private void authenticate(String username, String password) throws Exception {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -104,7 +114,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> getUserByName(String name) {
-        return userConverter.entityToDto(userRepo.findByName(name));
+        return userConverter.entityToDto(userRepo.findByFullNameContaining(name));
     }
 
     @Override
@@ -134,9 +144,7 @@ public class UserServiceImpl implements UserService {
         }
         if (Objects.nonNull(user.getDob()) && !"".equalsIgnoreCase(user.getDob().toString())) {
             newUser.setDob(user.getDob());
-        }
-        if (Objects.nonNull(user.getAge()) && !"".equalsIgnoreCase(user.getAge().toString())) {
-            newUser.setAge(user.getAge());
+            newUser.setAge(Period.between(user.getDob(), LocalDate.now()).getYears());
         }
         if (Objects.nonNull(user.getAddress()) && !ObjectUtils.isEmpty(user.getAddress())) {
             newUser.setAddress(user.getAddress());

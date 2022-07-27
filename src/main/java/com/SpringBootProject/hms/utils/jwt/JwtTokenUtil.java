@@ -17,10 +17,14 @@ import java.util.function.Function;
 public class JwtTokenUtil implements Serializable {
 
     private static final long serialVersionUID = -2550185165626007488L;
-    public static final long JWT_TOKEN_VALIDITY = 30 * 24 * 60 * 60;        //sec
 
     @Value("${jwt.secret}")
     private String secret;
+    @Value("${jwt.expirationDateInSec}")
+    private long JWT_TOKEN_VALIDITY;
+    @Value("${jwt.refreshExpirationDateInMs}")
+    private long refreshExpirationDateInMs;
+
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -63,6 +67,14 @@ public class JwtTokenUtil implements Serializable {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
+    }
+
+    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationDateInMs))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
+
     }
 
     //validate token
