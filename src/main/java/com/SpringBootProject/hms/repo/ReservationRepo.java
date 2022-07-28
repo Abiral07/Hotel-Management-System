@@ -15,4 +15,7 @@ public interface ReservationRepo extends JpaRepository<Reservation, Long> {
 
     @Query(value = "SELECT * FROM hms.reservation as rv WHERE in_date BETWEEN DATE_ADD(:today, INTERVAL -10 HOUR) AND DATE_ADD(:today, INTERVAL 1 DAY)", nativeQuery = true)
     List<Reservation> findReservationByDate(LocalDate today);
+
+    @Query(value = "select * from hms.reservation as r where r.reservation_id = :reservationId and r.rid = :roomId and r.uid = :userId", nativeQuery = true)
+    Reservation findReservation(Long reservationId, Long roomId, Long userId);
 }

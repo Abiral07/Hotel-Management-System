@@ -22,11 +22,13 @@ public class PathConstant {
     public static final String ADD_RESERVATION = "/addReservation";
     public static final String GET_RESERVATION_BY_ID = "/getReservation/{id}";
     public static final String UPDATE_RESERVATION = "/updateReservation/{id}";
-//    ----------------------Role--------------------------------------------
+    //    ----------------------Role--------------------------------------------
     public static final String GET_ALL_ROLES = "/getRoles";
     public static final String GET_ROLE_BY_NAME = "/getRoles/{name}";
     public static final String ADD_ROLE = "/addRole";
     public static final String UPDATE_ROLE = "/updateRole/{id}";
     public static final String ADD_ROLE_TO_USER = "/addRoleToUser/{id}";
     public static final String REFRESH_TOKEN = "/refreshToken";
+    public static final String CHECKIN = "/checkIn";
+    public static final String CHECKOUT = "/checkOut";
 }

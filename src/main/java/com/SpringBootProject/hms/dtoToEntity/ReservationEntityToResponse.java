@@ -20,6 +20,7 @@ public class ReservationEntityToResponse {
                 .totalPrice(savedEntity.getTotalPrice())
                 .paymentGateway(savedEntity.getPaymentGateway())
                 .paymentStatus(savedEntity.getPaymentStatus())
+                .reservationStatus(savedEntity.getReservationStatus())
                 .createdAt(savedEntity.getCreatedAt())
                 .updatedAt(savedEntity.getUpdatedAt())
                 .build();

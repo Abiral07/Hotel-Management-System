@@ -32,25 +32,45 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.addReservation(reservationDto, bearerToken.substring(7)),
                 HttpStatus.CREATED);
     }
+
     @PostMapping(PathConstant.UPDATE_RESERVATION)
-    public ResponseEntity<ReservationResponse> updateReservation(@PathVariable("id")Long id,@Valid @RequestBody ReservationRequest reservation) throws CustomException {
+    public ResponseEntity<ReservationResponse> updateReservation(@PathVariable("id") Long id, @Valid @RequestBody ReservationRequest reservation) throws CustomException {
         return new ResponseEntity<>(reservationService.updateReservation(id, reservation), HttpStatus.CREATED);
     }
 
     @GetMapping(PathConstant.GET_ALL_RESERVATION)
-    public ResponseEntity<List<ReservationResponse>> getAllReservation(){
+    public ResponseEntity<List<ReservationResponse>> getAllReservation() {
         return ResponseEntity.ok(reservationService.getAllReservation());
     }
+
     @GetMapping(PathConstant.GET_RESERVATION_BY_ID)
-    public ResponseEntity<ReservationResponse> getReservationById(@PathVariable("id")Long id){
+    public ResponseEntity<ReservationResponse> getReservationById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(reservationService.getReservationById(id));
     }
+
     @GetMapping(PathConstant.GET_RESERVATION_OF_USER)
-    public ResponseEntity<List<ReservationResponse>> getReservationOfUser(@PathVariable("name")String userName){
+    public ResponseEntity<List<ReservationResponse>> getReservationOfUser(@PathVariable("name") String userName) {
         return ResponseEntity.ok(reservationService.getReservationOfUser(userName));
     }
+
     @GetMapping(PathConstant.GET_RESERVATION_OF_TODAY)
-    public ResponseEntity<List<ReservationResponse>> getReservationOfToday(){
+    public ResponseEntity<List<ReservationResponse>> getReservationOfToday() {
         return ResponseEntity.ok(reservationService.getReservationOfToday());
+    }
+
+    @GetMapping(PathConstant.CHECKOUT)
+    public ResponseEntity<ReservationResponse> checkout(
+            @RequestParam("id") Long reservationId,
+            @RequestParam("rid") Long roomId,
+            @RequestParam("uid") Long userId) {
+        return ResponseEntity.ok(reservationService.checkout(reservationId, roomId, userId));
+    }
+
+    @GetMapping(PathConstant.CHECKIN)
+    public ResponseEntity<ReservationResponse> checkIn(
+            @RequestParam("id") Long reservationId,
+            @RequestParam("rid") Long roomId,
+            @RequestParam("uid") Long userId) {
+        return ResponseEntity.ok(reservationService.checkIn(reservationId, roomId, userId));
     }
 }

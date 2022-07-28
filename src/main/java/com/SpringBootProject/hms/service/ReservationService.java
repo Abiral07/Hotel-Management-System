@@ -44,4 +44,12 @@ public interface ReservationService {
      * @return reservation details
      */
     List<ReservationResponse> getReservationOfToday();
+
+    /**
+     * @param roomId :id of the room
+     * @return :updated reservation details
+     */
+    ReservationResponse checkout(Long reservationId, Long roomId, Long userId);
+
+    ReservationResponse checkIn(Long reservationId, Long roomId, Long userI);
 }

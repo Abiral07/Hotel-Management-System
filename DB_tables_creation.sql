@@ -42,6 +42,7 @@ CREATE TABLE hms.reservation(
     total_price decimal,
     payment_gateway varchar(50),
     payment_status bit(1),
+    reservation_status enum("PENDING","SUCCESS","CHECKED_IN","CHECKED_OUT","FAILED"),
     created_at datetime(6),
     updated_at datetime(6),
 	CONSTRAINT fk_cid FOREIGN KEY(uid) REFERENCES users(uid),

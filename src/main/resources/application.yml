@@ -6,7 +6,7 @@ server:
 
 jwt:
   secret: jaxbasmxmansxbxjkasjkc
-  expirationDateInSec: 60
+  expirationDateInSec: 2000000
   refreshExpirationDateInMs: 9000000
 aes:
   encryption:
@@ -47,7 +47,7 @@ spring:
     activate:
       on-profile: qa
   datasource:
-    url: jdbc:mysql://localhost:3306/hms-QA
+    url: jdbc:mysql://localhost:3306/hms-qa
     username: root
     password: root@fonepay
     driver-class-name: com.mysql.cj.jdbc.Driver

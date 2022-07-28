@@ -1,6 +1,7 @@
 package com.SpringBootProject.hms.dto.responseDto;
 
 import com.SpringBootProject.hms.entity.PaymentGateway;
+import com.SpringBootProject.hms.entity.ReservationStatus;
 import com.SpringBootProject.hms.entity.RoomType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,7 @@ public class ReservationResponse {
     @Enumerated(EnumType.STRING)
     private PaymentGateway paymentGateway;
     private Boolean paymentStatus;
+    private ReservationStatus reservationStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

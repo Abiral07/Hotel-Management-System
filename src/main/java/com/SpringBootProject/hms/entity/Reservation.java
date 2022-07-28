@@ -45,7 +45,7 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private RoomType type;
 
-    @Column(name = "total_price",precision = 10, scale = 2)
+    @Column(name = "total_price", precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
     @Column(name = "payment_gateway")
@@ -53,7 +53,11 @@ public class Reservation {
     private PaymentGateway paymentGateway;
 
     @Column(name = "payment_status", columnDefinition = "BIT(1) default '0'")
-    private Boolean paymentStatus;
+    private Boolean paymentStatus = Boolean.FALSE;
+
+    @Column(name = "reservation_status")
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus = ReservationStatus.PENDING;
 
     @CreationTimestamp
     @Column(name = "created_at")
