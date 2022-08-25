@@ -1,8 +1,10 @@
 package com.SpringBootProject.hms.service.Impl;
 
 import com.SpringBootProject.hms.dto.requestDto.LoginDto;
+import com.SpringBootProject.hms.dto.requestDto.UpdateUserDto;
 import com.SpringBootProject.hms.dto.requestDto.UserRequestDto;
 import com.SpringBootProject.hms.dto.responseDto.LoginResponseJWT;
+import com.SpringBootProject.hms.dto.responseDto.Profile;
 import com.SpringBootProject.hms.dto.responseDto.UserResponseDto;
 import com.SpringBootProject.hms.dtoToEntity.UserConverter;
 import com.SpringBootProject.hms.entity.Role;
@@ -29,9 +31,11 @@ import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -57,7 +61,7 @@ public class UserServiceImpl implements UserService {
     HttpSession sessionObj;
     @Override
     public List<UserResponseDto> getAllUsers() {
-        return userConverter.entityToDto(userRepo.findAll());
+        return userConverter.entityToDto(userRepo.findAll().stream().map(this::decryptData).collect(Collectors.toList()));
     }
 
     @Override
@@ -86,16 +90,35 @@ public class UserServiceImpl implements UserService {
         sessionObj.setAttribute("userName", userDetails.getUsername());
         sessionObj.setAttribute("Roles", userDetails.getAuthorities());
 //        ----------------------SESSION-------------------------------------
-        return new LoginResponseJWT(jwtToken);
+        return new LoginResponseJWT(jwtToken, sessionObj.getAttribute("Roles"));
     }
 
     @Override
-    public String refreshToken(HttpServletRequest request) {
+    public LoginResponseJWT refreshToken(HttpServletRequest request) {
         // From the HttpRequest get the claims
         DefaultClaims claims = (io.jsonwebtoken.impl.DefaultClaims) request.getAttribute("claims");
 
         Map<String, Object> expectedMap = new HashMap<>(claims);
-        return jwtTokenUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());
+        return new LoginResponseJWT(jwtTokenUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString()), sessionObj.getAttribute("Roles"));
+    }
+
+    @Override
+    public String validateVerificationToken(String token) {
+        String userName = jwtTokenUtil.getUsernameFromToken(token);
+        Users user = userRepo.findByUserName(userName);
+        if (user == null) {
+            throw new CustomException("User not found");
+        }
+
+        Calendar cal = Calendar.getInstance();
+        if ((jwtTokenUtil.getExpirationDateFromToken(token).getTime()
+                - cal.getTime().getTime()) <= 0) {
+            throw new CustomException("Link expired");
+        }
+
+        user.setIsActive(true);
+        userRepo.save(user);
+        return "valid";
     }
 
     private void authenticate(String username, String password) throws Exception {
@@ -109,49 +132,74 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public UserResponseDto getUserById(Long id) {
-        return userConverter.entityToDto(userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id)));
+        Users users = decryptData(userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id)));
+        System.out.println(users);
+        return userConverter.entityToDto(users);
     }
 
     @Override
     public List<UserResponseDto> getUserByName(String name) {
-        return userConverter.entityToDto(userRepo.findByFullNameContaining(name));
+        return userConverter.entityToDto(userRepo.findByFullNameContaining(name).stream().map(this::decryptData).collect(Collectors.toList()));
     }
 
     @Override
-    public UserResponseDto updateUser(Long id, UserRequestDto user) throws CustomException{
-        Users newUser = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id));
+    public UserResponseDto updateUser(Long id, UpdateUserDto user) throws CustomException {
+        Users dbUser = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id));
 
-        if (Objects.nonNull(user.getUserName()) && !"".equalsIgnoreCase(user.getUserName())) {
+        if (Objects.nonNull(user.getUserName()) && !"".equalsIgnoreCase(user.getUserName()) && !dbUser.getUsername().equalsIgnoreCase(user.getUserName())) {
             if (Objects.nonNull(userRepo.findByUserName(user.getUserName()))) {
                 throw new CustomException("DUPLICATE USER NAME");
             } else
-                newUser.setUserName(user.getUserName());
+                dbUser.setUserName(user.getUserName());
         }
-        if (Objects.nonNull(user.getPassword()) && !"".equalsIgnoreCase(user.getPassword())) {
-            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (Objects.nonNull(user.getFullName()) && !"".equalsIgnoreCase(user.getFullName()) && !dbUser.getFullName().equalsIgnoreCase(user.getFullName())) {
+            dbUser.setFullName(user.getFullName());
         }
-        if (Objects.nonNull(user.getFullName()) && !"".equalsIgnoreCase(user.getFullName())) {
-            newUser.setFullName(user.getFullName());
+        if (Objects.nonNull(user.getEmail()) && !"".equalsIgnoreCase(user.getEmail()) && !aesEncryption.decrypt("AES/CBC/PKCS5Padding", dbUser.getEmail()).equalsIgnoreCase(user.getEmail())) {
+            dbUser.setEmail(aesEncryption.encrypt("AES/CBC/PKCS5Padding", user.getEmail()));
         }
-        if (Objects.nonNull(user.getEmail()) && !"".equalsIgnoreCase(user.getEmail())) {
-            newUser.setEmail(aesEncryption.encrypt("AES/CBC/PKCS5Padding",user.getEmail()));
+        if (Objects.nonNull(user.getMobile()) && !"".equalsIgnoreCase(user.getMobile()) && !rsa.rsaDecrypt(dbUser.getMobile()).equalsIgnoreCase(user.getUserName())) {
+            dbUser.setMobile(rsa.rsaEncrypt(user.getMobile()));
         }
-        if (Objects.nonNull(user.getMobile()) && !"".equalsIgnoreCase(user.getMobile())) {
-            newUser.setMobile(rsa.rsaEncrypt(user.getMobile()));
+        if (Objects.nonNull(user.getGender()) && !"".equalsIgnoreCase(user.getGender().toString()) && !dbUser.getGender().toString().equalsIgnoreCase(user.getGender().toString())) {
+            dbUser.setGender(user.getGender());
         }
-        if (Objects.nonNull(user.getGender()) && !"".equalsIgnoreCase(user.getGender().toString())) {
-            newUser.setGender(user.getGender());
-        }
-        if (Objects.nonNull(user.getDob()) && !"".equalsIgnoreCase(user.getDob().toString())) {
-            newUser.setDob(user.getDob());
-            newUser.setAge(Period.between(user.getDob(), LocalDate.now()).getYears());
+        if (Objects.nonNull(user.getDob()) && !"".equalsIgnoreCase(user.getDob().toString()) && !dbUser.getDob().isEqual(user.getDob())) {
+            dbUser.setDob(user.getDob());
+            dbUser.setAge(Period.between(user.getDob(), LocalDate.now()).getYears());
         }
         if (Objects.nonNull(user.getAddress()) && !ObjectUtils.isEmpty(user.getAddress())) {
-            newUser.setAddress(user.getAddress());
+            dbUser.setAddress(user.getAddress());
         }
 
-        return userConverter.entityToDto(userRepo.save(newUser));
+        return userConverter.entityToDto(decryptData(userRepo.save(dbUser)));
     }
 
+    @Override
+    public Profile getCurrentUser(Principal principal) {
+        Users users = (Users) userDetailsService.loadUserByUsername(principal.getName());
+        return new Profile(decryptData(users));
+    }
 
+    @Override
+    public String updatePassword(Long id, UpdateUserDto Dto) {
+        Users dbUser = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "Id", id));
+        if (Objects.nonNull(Dto.getOldPassword()) && !"".equalsIgnoreCase(Dto.getOldPassword()) &&
+                Objects.nonNull(Dto.getNewPassword()) && !"".equalsIgnoreCase(Dto.getNewPassword())) {
+            if (passwordEncoder.matches(Dto.getOldPassword(), dbUser.getPassword())) {
+                dbUser.setPassword(passwordEncoder.encode(Dto.getNewPassword()));
+                userRepo.save(dbUser);
+                return "Password change success";
+            } else {
+                throw new CustomException("Old Password didn't match");
+            }
+        }
+        return "failed to change password";
+    }
+
+    public Users decryptData(Users users) {
+        users.setEmail(aesEncryption.decrypt("AES/CBC/PKCS5Padding", users.getEmail()));
+        users.setMobile(rsa.rsaDecrypt(users.getMobile()));
+        return users;
+    }
 }

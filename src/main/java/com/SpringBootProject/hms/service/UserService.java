@@ -1,8 +1,10 @@
 package com.SpringBootProject.hms.service;
 
 import com.SpringBootProject.hms.dto.requestDto.LoginDto;
+import com.SpringBootProject.hms.dto.requestDto.UpdateUserDto;
 import com.SpringBootProject.hms.dto.requestDto.UserRequestDto;
 import com.SpringBootProject.hms.dto.responseDto.LoginResponseJWT;
+import com.SpringBootProject.hms.dto.responseDto.Profile;
 import com.SpringBootProject.hms.dto.responseDto.UserResponseDto;
 import com.SpringBootProject.hms.exceptions.CustomException;
 
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
@@ -56,7 +59,7 @@ public interface UserService {
      * @throws IOException                        while generating private/public rsa keys
      * @throws InvalidKeySpecException            while generating private/public rsa keys
      */
-    UserResponseDto updateUser(Long id, UserRequestDto user) throws CustomException, InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IOException, InvalidKeySpecException;
+    UserResponseDto updateUser(Long id, UpdateUserDto user) throws CustomException, InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, IOException, InvalidKeySpecException;
 
     /**
      * @param request  :for adding user data to session from request
@@ -66,5 +69,11 @@ public interface UserService {
      */
     LoginResponseJWT userLogin(HttpServletRequest request, LoginDto loginDto) throws Exception;
 
-    String refreshToken(HttpServletRequest request);
+    LoginResponseJWT refreshToken(HttpServletRequest request);
+
+    String validateVerificationToken(String token);
+
+    Profile getCurrentUser(Principal principal);
+
+    String updatePassword(Long id, UpdateUserDto userDto);
 }

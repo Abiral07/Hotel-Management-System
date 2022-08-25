@@ -1,5 +1,6 @@
 package com.SpringBootProject.hms.dto.responseDto;
 
+import com.SpringBootProject.hms.entity.Address;
 import com.SpringBootProject.hms.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class UserResponseDto {
+    private Long uid;
     private String userName;
     private String fullName;
     private String email;
@@ -22,5 +24,5 @@ public class UserResponseDto {
     @DateTimeFormat
     private LocalDate dob;
     private Integer age;
-//    private Long addressId;
+    private Address address;
 }

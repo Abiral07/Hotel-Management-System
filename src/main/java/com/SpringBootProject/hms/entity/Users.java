@@ -44,14 +44,14 @@ public class Users implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
     @Column(name = "dob")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dob;
     @Column(name = "age")
     @Min(value = 18, message = "Age should be greater than 18")
     @Max(value = 150, message = "Age cannot be more than 150")
     private Integer age;
     @Column(name = "isactive")
-    private Boolean isActive;
+    private Boolean isActive = Boolean.FALSE;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_role",
             joinColumns = {@JoinColumn(name = "uid")},
@@ -59,8 +59,8 @@ public class Users implements UserDetails {
     )
     private Set<Role> roles;
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
-    @JoinColumn(name= "address" ,referencedColumnName = "aid")
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "address", referencedColumnName = "aid")
     private Address address;
 
     @Override
@@ -94,7 +94,7 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isActive;
     }
 
     public void addRole(Role roleFromDb) {

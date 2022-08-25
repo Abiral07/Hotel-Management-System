@@ -3,19 +3,25 @@ package com.SpringBootProject.hms.constants;
 public class PathConstant {
     public static final String LOGIN = "/login";
     public static final String REGISTRATION = "/registration";
-//    ----------------------USERS--------------------------------------------
+    public static final String VERIFY_REGISTRATION = "/verifyRegistration*";
+
+    public static final String RESEND_VERIFICATION = "/resendVerifyToken*";
+    //    ----------------------USERS--------------------------------------------
     public static final String GET_ALL_USERS = "/getUsers";
     public static final String GET_USER_BY_ID = "/getUser/{id}";
     public static final String GET_USER_BY_NAME = "/getUser/name/{name}";
+    public static final String CURRENT_USER = "/current-user";
     public static final String UPDATE_USER = "/updateUser/{id}";
+    public static final String CHANGE_PASSWORD = "/change-password/{id}";
+    public static final String FORGET_PASSWORD = "forget-password";
 
-//    ----------------------ROOM--------------------------------------------
+    //    ----------------------ROOM--------------------------------------------
     public static final String GET_ALL_ROOM = "/getRooms";
     public static final String GET_ROOM_BY_ID = "/getRoom/{id}";
     public static final String GET_ROOM_BY_TYPE = "/getRooms/{type}";
     public static final String UPDATE_ROOM = "/updateRoom/{id}";
     public static final String ADD_ROOM = "/addRoom";
-//    ----------------------RESERVATION--------------------------------------------
+    //    ----------------------RESERVATION--------------------------------------------
     public static final String GET_ALL_RESERVATION = "/getReservation";
     public static final String GET_RESERVATION_OF_USER = "/getReservation/user/{name}";
     public static final String GET_RESERVATION_OF_TODAY = "/todayReservation";
@@ -31,4 +37,5 @@ public class PathConstant {
     public static final String REFRESH_TOKEN = "/refreshToken";
     public static final String CHECKIN = "/checkIn";
     public static final String CHECKOUT = "/checkOut";
+
 }

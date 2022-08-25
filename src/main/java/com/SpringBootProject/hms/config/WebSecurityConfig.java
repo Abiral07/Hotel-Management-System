@@ -38,14 +38,20 @@ public class WebSecurityConfig {
             "/v2/api-docs",
             "/webjars/**",
             PathConstant.REGISTRATION,
-            PathConstant.LOGIN
+            PathConstant.VERIFY_REGISTRATION,
+            PathConstant.RESEND_VERIFICATION,
+            PathConstant.LOGIN,
+            PathConstant.CHANGE_PASSWORD,
+            PathConstant.FORGET_PASSWORD,
+            PathConstant.CURRENT_USER
     };
     private static final String[] USER_URL = {
             PathConstant.ADD_RESERVATION,
             PathConstant.GET_ALL_ROOM,
             PathConstant.GET_ROOM_BY_ID,
             PathConstant.GET_ROOM_BY_TYPE,
-            PathConstant.GET_RESERVATION_OF_USER
+            PathConstant.GET_RESERVATION_OF_USER,
+            PathConstant.GET_USER_BY_ID
 
     };
     private static final String[] VIEW_URLS = {
@@ -61,7 +67,6 @@ public class WebSecurityConfig {
             PathConstant.UPDATE_ROOM,
             PathConstant.ADD_ROOM,
             PathConstant.UPDATE_RESERVATION,
-            PathConstant.UPDATE_ROLE,
             PathConstant.GET_ALL_ROLES,
             PathConstant.GET_ROLE_BY_NAME,
             PathConstant.ADD_ROLE,
